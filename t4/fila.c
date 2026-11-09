@@ -2,73 +2,90 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <stdbool.h>
+#include <string.h>
+#include <assert.h>
 
-typedef struct no *No;
-
-struct no{
-    no *prox;
-    no *ant;
+typedef struct no{
+    struct no *prox;
+    struct no *ant;
     void *dado;
-}
+} *No;
 
 struct fila{
     No prim;
-    int tam_do_dado;
-}
+    No ult;
+    int tam_dado;
+    int perc_pos;
+    int n_ele;
+    No perc_atual;
+};
 
 Fila f_cria(int tam_do_dado){
     Fila f = malloc(sizeof(struct fila));
+    assert(f != NULL);
     f->prim = NULL;
-    f->tam_do_dado = tam_do_dado;
+    f->ult = NULL;
+    f->perc_pos = -1;
+    f->tam_dado = tam_do_dado;
+    f->perc_atual = NULL;
+    f->n_ele = 0;
     return f;
 }
 
+bool f_tá_vazia(Fila self){
+    return self->prim == NULL;
+}
+
 void f_insere(Fila self, void *pdado){
-    if(f->prim == NULL){
-        f->prim = malloc(sizeof(struct no));
-        assert(f->prim != NULL);
-        f->prim->prox = NULL;
-        f->prim->ant = NULL;
-        f->prim->dado = malloc(f->tam_do_dado);
-        assert(f->prim->dado != NULL);
-        *(f->prim->dado) = *pdado;
-        return;
-    }
-    No guia = f->prim;
-    while(guia->prox != NULL) guia = guia->prox;
-    guia->prox = malloc(sizeof(struct no));
-    assert(guia->prox != NULL);
-    guia->prox->ant = guia;
-    guia->prox->prox = self->prim;
-    guia->prox->dado = malloc(f->tam_do_dado);
-    *(guia->prox->dado) = *pdado;
+    No novo = malloc(sizeof(struct no));
+    assert(novo != NULL);
+    novo->prox = NULL;
+    novo->dado = malloc(self->tam_dado);
+    assert(novo->dado != NULL);
+    memcpy(novo->dado, pdado, self->tam_dado);
+    novo->ant = self->ult;
+    if(f_tá_vazia(self)) self->prim = novo;
+    else self->ult->prox = novo;
+    self->ult = novo;
+    self->n_ele++;
     return;
 }
 
-bool f_ta_vazia(Fila self){
-    return self->prox == NULL;
-}
-
 void f_remove(Fila self, void *pdado){
+    if(f_tá_vazia(self)) return;
     No remover = self->prim;
     self->prim = self->prim->prox;
-    self->prim->ant = NULL;
-    if(pdado != NULL) pdado = remover->dado;
-    else free(remover->dado);
+    if(self->prim != NULL) self->prim->ant = NULL;
+    else self->ult = NULL;
+    if(pdado != NULL) memcpy(pdado, remover->dado, self->tam_dado);
+    free(remover->dado);
     free(remover);
+    self->n_ele--;
 }
 
-void f_destroi(Fila self){
-    while(!f_ta_vazia(self)){
+void f_destrói(Fila self){
+    while(!f_tá_vazia(self)){
         f_remove(self, NULL);
     }
     free(self);
 }
 
-bool f_proximo(Fila self, void *pdado){
-    assert(self->prim != NULL);
-    No guia = self->prim;
-    while(guia)
+bool f_próximo(Fila self, void *pdado){
+    if(self->perc_atual == NULL) return false;
+    if(pdado != NULL) memcpy(pdado, self->perc_atual->dado, self->tam_dado);
+    self->perc_atual = (self->perc_pos >= 0) ? self->perc_atual->prox : self->perc_atual->ant;
+    return true;
+}
+
+void f_inicia_percurso(Fila self, int pos_inicial){
+    self->perc_pos = pos_inicial;
+    if(pos_inicial < 0) pos_inicial += self->n_ele;
+    if(pos_inicial < 0 || pos_inicial >= self->n_ele){
+        self->perc_atual = NULL;
+        return;
+    }
+    self->perc_atual = self->prim;
+    for(int i = 0; i < pos_inicial && self->perc_atual != NULL; i++)
+        self->perc_atual = self->perc_atual->prox;
 }
