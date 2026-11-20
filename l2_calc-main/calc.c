@@ -444,7 +444,7 @@ static void libera_tupla(chave_t chave, valor_t valor){
 void calc_destroi_dicionario(){
     if(variaveis != NULL){
         dic_para_todos(variaveis, libera_tupla);
-        dic_destroi(variaveis);
+        dic_destrói(variaveis);
         variaveis = NULL;
     }
 }
