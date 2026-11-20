@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <assert.h>
 
 typedef struct no *No;
 struct no{
@@ -113,7 +114,7 @@ dado_t l_remove_inicio(Lista l){
 }
 
 dado_t l_remove_fim(Lista l){
-    return l_remove_pos(1, l->tam - 1);
+    return l_remove_pos(l, l->tam - 1);
 }
 
 dado_t l_primeiro(Lista l){
@@ -148,9 +149,18 @@ Lista l_cria_separando(Str s, Str sep){
         int ini = s_busca_nc(s, pos, sep);
         if(ini == -1) break;
         int fim = s_busca_c(s, ini, sep);
-        if(fim == -1) break;
+        if(fim == -1) fim = n;
         l_insere_fim(l, s_cria_substring(s, ini, fim - ini));
         pos = fim;
     }
     return l;
+}
+
+void l_destroi(Lista l){
+    while(!l_vazia(l)){
+        dado_t temp = l_remove(l);
+        s_destroi(temp);
+    }
+    free(l->sent);
+    free(l);
 }
