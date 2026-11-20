@@ -134,6 +134,7 @@ static Categoria categoria(Str s){
             return Fecha;
 
         case '=':
+        default:
             return Igual;
     }
 }
@@ -164,7 +165,7 @@ static Acao decide(Categoria topo, Categoria novo){
             switch(novo){
                 case Mais_Menos: return Opera;
                 case Mul_Div: return Opera;
-                case Pot: return Opera;
+                case Pot: return Empilha;
                 case Abre: return Empilha;
                 case Fecha: return Opera;
                 case Igual: return Empilha;
@@ -190,6 +191,8 @@ static Acao decide(Categoria topo, Categoria novo){
                 case Igual: return Empilha;
             }
     }
+    assert(false); // não tem como chegar aqui a principio
+    return Empilha;
 }
 
 // func do dicionario
@@ -230,8 +233,7 @@ static char *busca_variavel(Dicionário dic, Str busca){
 }
 
 static bool obtem_valor(Str operando, Dicionário dic, double *valor, Str *erro){
-    unichar c = s_ch(operando, 0);
-    if(eh_digito(c)){
+    if(!eh_variavel(operando)){
         *valor = s_número(operando);
         return true;
     }
@@ -442,7 +444,7 @@ static void libera_tupla(chave_t chave, valor_t valor){
 void calc_destroi_dicionario(){
     if(variaveis != NULL){
         dic_para_todos(variaveis, libera_tupla);
-        dic_destrói(variaveis);
+        dic_destroi(variaveis);
         variaveis = NULL;
     }
 }
