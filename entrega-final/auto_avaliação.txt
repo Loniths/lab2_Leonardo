@@ -1,1 +1,38 @@
+Auto Avaliação:
 
+Leonardo Rosa
+
+Trabalhos:
+
+T1: 0
+Não fiz, acho que não preciso dizer mais nada né.
+
+T2: 8
+Acabei não colocando no git, mas ta feito, por conta disso não tive uma avaliação previa, mas acredito que esteja tudo ok
+lembro que na época fiz testes e não precisei corrigir nada(além de incrementar) para o T3.
+
+T3: 9
+Acabei colocando ele errado, por isso o .h tinha implementações e não compilava, mas fora isso, corrigi os erros que tinha
+que foram apontados na pré-avaliação, fiz o teste que o mesmo usou e tive os mesmos resultados, fiz o que foi pedido no
+trabalho, não coloco 10 por conta que acho que existem jeitos melhores de fazer a calculadora e a main.
+
+T4: 10
+Funciona, acho que isso é o principal, além disso tentei abordar o máximo de estruturas que eu conseguia na parte 3, por mais
+que não foram muitas, eu sei que deve ter algo que eu não consigo ver que tem como melhorar, espero que nada muito grave, mas
+não tive um retorno antes de hoje, e já está tarde então, melhor enviar do jeito que está
+
+Disciplina:
+Tipos Abstratos de Dados [9] - Entendi bem a teoria, entendo do porque existem, e o pra que são uteis
+Implementação de TADs em C [8] - Acredito sei bem, volta e meia tenho duvidas enquanto escrevo o código, mas não é nada que uma pesquisa no google não resolva
+Listas e suas derivações [10] - É uma teoria simples, não acho que tenha muito onde errar
+Implementação de Listas de alocação contígua [6] - Eu ainda acho meio confuso, na aula eu me senti bem perdido, mas com o tempo acho que assimilei um pouco melhor
+Implementação de Listas Encadeadas [8] - Entendo bem melhor que as contíguas, acho que talvez porque foram mais aplicadas em trabalhos
+Arvores Binárias [10] - Eu já tinha visto um pouco antes, então a disciplina só facilitou mais ainda
+Arvores Binárias de Busca [9] - Só não coloco 10 por que ainda me perco um pouco nas questões de auto-balanceiamento
+Grafos [9] - A teoria é uma das partes que eu mais sei...
+Implementação de Grafos [7] - Me confundo ainda sobre o qual ideia usar(matriz x lista) e me perco as vezes enquanto faço o código
+Algoritmos de Grafos [7] - Mesma coisa que o anterior
+
+O quanto acho que mereço: 8
+Por mais que eu não tenha entregue um trabalho, me dediquei na disciplina e consegui superar boa parte dos obstáculos, não me acho digno de um 10
+porque sei que tem pessoas na turma que se dedicaram muito mais que eu, mas acho válido passar com mais do que o mínimo.
