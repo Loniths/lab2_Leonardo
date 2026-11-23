@@ -1,6 +1,7 @@
 // includes, constantes e declarações {{{1
 #include "str.h"
 #include "utf8.h"
+#include "lista.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -209,28 +210,36 @@ bool s_igual(Str_c s, Str_c sb)
   return false;
 }
 
+static bool s_char_em(unichar c, Str_c s){
+  for(int i = 0; i < s->caracteres; i++){
+    if(c == s_ch(s, i )) return true;
+  }
+  return false;
+}
+
 int s_busca_c(Str_c s, int pos, Str_c sb)
 {
   s_ok(s);
   s_ok(sb);
   int posicao = pos >= 0 ? pos : s->caracteres + pos + 1;
+  if(posicao < 0) posicao = 0;
+  if(posicao > s->caracteres) posicao = s->caracteres;
   for(int i = posicao; i < s->caracteres; i++){
-    for(int j = 0; j < sb->caracteres; j++){
-      if(s_ch(s, i) == s_ch(sb, j)) return i;
-    }
+    if(s_char_em(s_ch(s, i), sb)) return i;
   }
   return -1;
 }
+
 
 int s_busca_nc(Str_c s, int pos, Str_c sb)
 {
   s_ok(s);
   s_ok(sb);
   int posicao = pos >= 0 ? pos : s->caracteres + pos + 1;
+  if(posicao < 0) posicao = 0;
+  if(posicao > s->caracteres) posicao = s->caracteres;
   for(int i = posicao; i < s->caracteres; i++){
-    for(int j = 0; j < sb->caracteres; j++){
-      if(s_ch(s, i) != s_ch(sb, j)) return i;
-    }
+    if(!s_char_em(s_ch(s, i), sb)) return i;
   }
   return -1;
 }
@@ -240,10 +249,10 @@ int s_busca_rc(Str_c s, int pos, Str_c sb)
   s_ok(s);
   s_ok(sb);
   int posicao = pos >= 0 ? pos : s->caracteres + pos + 1;
-  for(int i = posicao; i >= 0; i--){
-    for(int j = 0; j < sb->caracteres; j++){
-      if(s_ch(s, i) == s_ch(sb, j)) return i;
-    }
+  if(posicao < 0) posicao = 0;
+  if(posicao > s->caracteres) posicao = s->caracteres;
+  for(int i = posicao - 1; i >= 0; i--){
+    if(s_char_em(s_ch(s, i), sb)) return i;
   }
   return -1;
 }
@@ -253,10 +262,10 @@ int s_busca_rnc(Str_c s, int pos, Str_c sb)
   s_ok(s);
   s_ok(sb);
   int posicao = pos >= 0 ? pos : s->caracteres + pos + 1;
-  for(int i = posicao; i >= 0; i--){
-    for(int j = 0; j < sb->caracteres; j++){
-      if(s_ch(s, i) != s_ch(sb, j)) return i;
-    }
+  if(posicao < 0) posicao = 0;
+  if(posicao > s->caracteres) posicao = s->caracteres;
+  for(int i = posicao - 1; i >= 0; i--){
+    if(!s_char_em(s_ch(s, i), sb)) return i;
   }
   return -1;
 }
@@ -266,6 +275,8 @@ int s_busca_s(Str_c s, int pos, Str_c buscada)
   s_ok(s);
   s_ok(buscada);
   int posicao = pos >= 0 ? pos : s->caracteres + pos + 1;
+  if(posicao < 0) posicao = 0;
+  if(posicao > s->caracteres) posicao = s->caracteres;
   if(buscada->caracteres == 0) return posicao;
   for(int i = posicao; i < s->caracteres; i++){
     Str substring = s_cria_substring(s, i, buscada->caracteres);
@@ -284,6 +295,11 @@ int s_busca_s(Str_c s, int pos, Str_c buscada)
 void s_substitui(Str s, int pos, int tam, Str_c sb)
 {
   s_ok(s);
+  Str vazia = NULL;
+  if(sb == NULL){
+    vazia = s_cria("");
+    sb = vazia;
+  }
   s_ok(sb);
   int posicao = pos >= 0 ? pos : s->caracteres + pos + 1;
   int tamanho = tam >= 0 ? (posicao + tam - 1) : (s->caracteres - 1);
@@ -304,7 +320,7 @@ void s_substitui(Str s, int pos, int tam, Str_c sb)
     novo_espaco = prox_pot_2(novos_bytes);
     nova = malloc(novo_espaco);
     assert(nova != NULL);
-    memcpy(nova, s->string, bytes_antes);
+    if(bytes_antes > 0) memcpy(nova, s->string, bytes_antes);
     if(sb->espaco_usado > 0){
       memcpy(nova + bytes_antes, sb->string, sb->espaco_usado);
     }
@@ -322,6 +338,7 @@ void s_substitui(Str s, int pos, int tam, Str_c sb)
     s->espaco_usado = novos_bytes;
     s->caracteres = novos_caracteres;
   }
+  if(vazia != NULL) s_destroi(vazia);
 }
 
 void s_substring(Str s, Str_c sb, int pos, int tam){
@@ -389,12 +406,6 @@ void s_remove(Str s, int pos, int tam)
   s_substitui(s, pos, tam, NULL);
 }
 
-static bool s_char_em(unichar c, Str_c s){
-  for(int i = 0; i < s->caracteres; i++){
-    if(c == s_ch(s, i )) return true;
-  }
-  return false;
-}
 
 void s_apara(Str s, Str_c sobras)
 {
@@ -438,5 +449,29 @@ void s_grava_arquivo(Str_c s, char *nome)
   fclose(arq);
 }
 
+Str s_cria_número(double num){
+  char temp[20];
+  snprintf(temp, sizeof(temp), "%g", num);
+  return s_cria(temp);
+}
+
+double s_número(Str_c s){
+  s_ok(s);
+  char *c = s_strc(s);
+  double num = strtod(c, NULL);
+  free(c);
+  return num;
+}
+
+Str s_cria_unindo(Lista l, Str sep){
+  Str s = s_cria("");
+  int pos_l = 0;
+  while(pos_l < l_tam(l)){
+    if(pos_l > 0) s_anexa(s, sep);
+    s_anexa(s, l_dado_pos(l, pos_l));
+    pos_l++;
+  }
+  return s;
+}
 
 // vim: foldmethod=marker shiftwidth=2

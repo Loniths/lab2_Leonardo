@@ -1,7 +1,13 @@
 #ifndef _STR_H_
 #define _STR_H_
 
+// lista inclui str e str inclui lista. define o tipo Str antes das inclusões.
+// Str é o tipo de dados para nossas strings
+typedef struct str *Str;
+
 #include "utf8.h"
+#include "lista.h"
+
 #include <stdbool.h>
 
 // string (Str)
@@ -22,8 +28,6 @@
 
 // declarações {{{1
 
-// Str é o tipo de dados para nossas strings
-typedef struct str *Str;
 // Str_c é uma string não alterável
 //   usado para declarar parâmetros que a função não tem o direito de alterar
 typedef struct str const *Str_c;
@@ -46,6 +50,15 @@ typedef struct str const *Str_c;
 //   caractere \0 (que não faz parte da string).
 // Retorna uma string vazia se strC não contiver UTF8 válido ou se for NULL.
 Str s_cria(char const *strC);
+
+// Aloca, inicializa e retorna uma nova string, contendo a representação decimal de num
+Str s_cria_número(double num);
+
+// Retorna uma nova string, resultado da concatenação das strings em l, com a string
+//   em sep entre cada duas strings de l
+// Exemplo:
+// ["oi" "mundo"] ", " -> "oi, mundo"
+Str s_cria_unindo(Lista l, Str sep);
 
 // Destrói a string s, liberando a memória que ocupa.
 // Essa string não deve ser utilizada após essa chamada.
@@ -86,6 +99,8 @@ char *s_strc(Str_c s);
 // Retorna UNI_INV se pos estiver fora dos limites de s.
 unichar s_ch(Str_c s, int pos);
 
+// retorna um número que corresponde à representação decimal contida em s
+double s_número(Str_c s);
 
 // operações de busca e comparação {{{1
 
